@@ -14,12 +14,7 @@ classifiers = [
 ]
 readme = "README.md"
 
-dependencies = [
-    "base-ontology",
-    "gremlinpython>=3.7.3",
-    "jsonschema-pydantic>=0.6",
-    "pydantic>=2.11.1",
-]
+dependencies = []
 
 [dependency-groups]
 dev = [
@@ -80,8 +75,3 @@ version_files = [
 ]
 major_version_zero = true
 update_changelog_on_bump = true
-
-[tool.uv.sources]
-base-ontology = { git = "https://github.com/ardaaras99/base-ontology.git" }
-
-
