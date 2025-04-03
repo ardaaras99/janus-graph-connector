@@ -1,40 +1,28 @@
 from pathlib import Path
 
+from base_ontology.node import BaseNode
+from base_ontology.relation import BaseRelation
+
 from janus_graph_connector.graph_utils import JanusGraphClient
+from janus_graph_connector.utils import save_nodes, save_relations
 
-execute = True
+# 0. Save pydantic object as JSON
+NODE_DICT: dict[str, tuple[type[BaseNode], bool, str]] = {}
+RELATION_DICT: dict[str, type[BaseRelation]] = {}
 
+ontology_name: str = ""
+version: str = ""
+node_path: str = ""
+relation_path: str = ""
+save_nodes(NODE_DICT, node_path)
+save_relations(RELATION_DICT, relation_path)
 
+# 1. Write v0 version by reading JSON files (simulating JSON file reading)
 testClient = JanusGraphClient()
+testClient.cleanup_graph(ontology_name=ontology_name, version=version)
+testClient.write_nodes(json_file_path=Path(node_path), ontology_name=ontology_name, version=version)
+testClient.write_relations(json_file_path=Path(relation_path), ontology_name=ontology_name, version=version)
 
-test_ontology_version = "1.0"
-if execute:
-    node_path_dict = {
-        "ontology_graph_1": {
-            "nodes": "saved_dict/NODE_DICT1.json",
-            "relations": "saved_dict/RELATION_DICT1.json",
-        },
-        "ontology_graph_2": {
-            "nodes": "saved_dict/NODE_DICT2.json",
-            "relations": "saved_dict/RELATION_DICT2.json",
-        },
-    }
-    for ontology_graph_name, graph_info in node_path_dict.items():
-        testClient.cleanup_graph(ontology_name=ontology_graph_name, version=test_ontology_version)
-
-        testClient.write_nodes(
-            json_file_path=Path(graph_info["nodes"]),
-            ontology_name=ontology_graph_name,
-            version=test_ontology_version,
-        )
-        testClient.write_relations(
-            json_file_path=Path(graph_info["relations"]),
-            ontology_name=ontology_graph_name,
-            version=test_ontology_version,
-        )
-
-        NODE_DICT = testClient.read_nodes(ontology_name=ontology_graph_name, version=test_ontology_version)
-        RELATION_DICT = testClient.read_relations(ontology_name=ontology_graph_name, version=test_ontology_version, node_dict=NODE_DICT)
-
-        print(NODE_DICT)
-        print(RELATION_DICT)
+# 2. Finally read the graph
+READED_NODE_DICT = testClient.read_nodes(ontology_name=ontology_name, version=version)
+READED_RELATION_DICT = testClient.read_relations(ontology_name=ontology_name, version=version, node_dict=NODE_DICT)
